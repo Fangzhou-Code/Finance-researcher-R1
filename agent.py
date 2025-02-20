@@ -1,20 +1,23 @@
 from tavily import TavilyClient
 from dotenv import load_dotenv
 import os
-import jieba
-from jieba.analyse import default_tfidf
+from utils.scenario_inference_and_keyword_substitution import scenario_inference_and_keyword_substitution
+from utils.split_input import split_input
+from utils.analyze_question import analyze_question
 load_dotenv()
 
 # 查询
-tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
-input_text = "Who is the most important principle in market economics?"
-documents = input_text.split(';')
-def extract_keywords(text):
-    return jieba.analyse.extract_tags(input_text)
-query_keywords = extract_keywords(input_text) # 提取查询关键词
-print(query_keywords)
+input = "Who is the most important princi in market economics and the most important indicator in financial sheet?"
+input = scenario_inference_and_keyword_substitution(input)
+questions = split_input(input)
+keyword_list, domain_list = zip(*[analyze_question(question) for question in questions])
+# 将元组转换为列表
+keyword1_list = list(keyword_list) # ['principle', 'indicator']
+keyword2_list = list(domain_list) # ['market economics', 'financial sheet']
 
 
+
+# tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
 
 
 # response = tavily_client.search(input_text)

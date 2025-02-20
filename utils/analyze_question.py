@@ -4,9 +4,8 @@ load_dotenv()
 import os
 import json
 
-def analyze_question():
+def analyze_question(question):
     url = "https://api.siliconflow.cn/v1/chat/completions"
-    question = "请你查询半导体的新闻我需要判断股价"
     payload = {
         "model": "deepseek-ai/DeepSeek-V3",
         "messages": [
@@ -51,8 +50,9 @@ def analyze_question():
         keyword2 = keywords[1].strip()  # 去掉多余的空格
         print(f"关键词1: {keyword1}")
         print(f"关键词2: {keyword2}")
+        return keyword1, keyword2
     else:
         print("无法提取两个关键词")
 
 if __name__ == "__main__":
-    analyze_question()
+    analyze_question("请你查询半导体的新闻我需要判断股价")

@@ -1,18 +1,19 @@
+# -*- coding: utf-8 -*-
+
 import requests
 from dotenv import load_dotenv
 load_dotenv()
 import os
 import json
 
-def split_input():
+def split_input(input):
     url = "https://api.siliconflow.cn/v1/chat/completions"
-    question = "请你告诉我如何查询和阅读财务报告，财务报告中哪些指标最重要"
     payload = {
         "model": "deepseek-ai/DeepSeek-V3",
         "messages": [
             {
                 "role": "user",
-                "content": f"请根据以下用户输入拆分出独立的问题，并按以下格式输出：第一个问题，第二个问题，...，第n个问题。 例如：提问：请你查询半导体和电车的新闻我需要判断股价，拆分结果：请你查询半导体的新闻，我需要判断股价，请你查询电车的新闻，我需要判断股价。请模型模仿上面的举例对下面的提问进行拆分：{question}"
+                "content": f"请根据以下用户输入拆分出独立的问题，并按以下格式输出：第一个问题，第二个问题，...，第n个问题。 例如：提问：请你查询半导体和电车的新闻我需要判断股价，拆分结果：请你查询半导体的新闻，我需要判断股价，请你查询电车的新闻，我需要判断股价。请模型模仿上面的举例对下面的提问进行拆分：{input}，要求每个问题前面不要带上第几个问题的标识，直接输出问题逗号隔开。"
             }
         ],
         "stream": False,
@@ -45,10 +46,9 @@ def split_input():
     data = json.loads(response.text)
     content = data['choices'][0]["message"]['content']
     print(content)
-    questions = content.replace("，", ",").split(",")  # 先替换中文逗号为英文逗号，然后分割
-    questions = content.split("，")  # 按中文逗号分割
-    for idx, question in enumerate(questions, 1):
-        print(f"第{idx}个问题: {question.strip()}")
+    questions = content.replace("，", ",").split(",")  # 先替换中文逗号为英文逗号
+    questions = [question.strip() for question in questions]
+    return questions
 
 if __name__ == "__main__":
-    split_input()
+    split_input("请你告诉我如何查询和阅读财务报告，财务报告中哪些指标最重要")
