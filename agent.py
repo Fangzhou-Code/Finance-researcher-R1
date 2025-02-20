@@ -1,6 +1,6 @@
 from tavily import TavilyClient
 from dotenv import load_dotenv
-import os
+import os, requests
 from utils.scenario_inference_and_keyword_substitution import scenario_inference_and_keyword_substitution
 from utils.split_input import split_input
 from utils.analyze_question import analyze_question
@@ -9,18 +9,41 @@ load_dotenv()
 # 查询
 input = "Who is the most important princi in market economics and the most important indicator in financial sheet?"
 input = scenario_inference_and_keyword_substitution(input)
-questions = split_input(input)
+questions = split_input(input) # <class 'list'>
 keyword_list, domain_list = zip(*[analyze_question(question) for question in questions])
 # 将元组转换为列表
 keyword1_list = list(keyword_list) # ['principle', 'indicator']
-keyword2_list = list(domain_list) # ['market economics', 'financial sheet']
+domain_list = list(domain_list) # ['market economics', 'financial sheet']
 
 
 
-# tavily_client = TavilyClient(api_key=os.getenv("TAVILY_API_KEY"))
+url = "https://api.tavily.com/search"
 
+payload = {
+    "query": input,
+    "topic": "",
+    "search_depth": "basic",
+    "max_results": 1,
+    "time_range": None,
+    "days": 3,
+    "include_answer": True,
+    "include_raw_content": False,
+    "include_images": False,
+    "include_image_descriptions": False,
+    "include_domains": [],
+    "exclude_domains": domain_list
+}
+headers = {
+    "Authorization": f"Bearer {os.getenv('TAVILY_API_KEY')}",
+    "Content-Type": "application/json"
+}
 
-# response = tavily_client.search(input_text)
+response = requests.request("POST", url, json=payload, headers=headers)
+response = response.json()
+print(f"title={response['results'][0]['title']}\n")
+print(f"url={response['results'][0]['url']}\n")
+print(f"content={response['results'][0]['content']}\n")
+print(f"answer={response['answer']}\n")
 
 
 
