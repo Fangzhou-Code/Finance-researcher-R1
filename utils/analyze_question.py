@@ -53,7 +53,7 @@ def analyze_question(question):
         print(f"关键词1: {keyword1}")
         print(f"关键词2: {keyword2}")
         print(f"关键词3: {keyword3}")
-        return keyword1, keyword2
+        return keyword1, keyword2, keyword3
     else:
         print("无法提取三个关键词")
 

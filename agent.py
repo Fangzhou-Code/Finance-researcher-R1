@@ -6,15 +6,15 @@ from utils.split_input import split_input
 from utils.analyze_question import analyze_question
 load_dotenv()
 
-# 查询
-input = "Who is the most important princi in market economics and the most important indicator in financial sheet?"
-input = scenario_inference_and_keyword_substitution(input)
-questions = split_input(input) # <class 'list'>
-keyword_list, domain_list = zip(*[analyze_question(question) for question in questions])
-# 将元组转换为列表
-keyword1_list = list(keyword_list) # ['principle', 'indicator']
-domain_list = list(domain_list) # ['market economics', 'financial sheet']
-
+# # 查询
+# input = "Who is the most important princi in market economics and the most important indicator in financial sheet?"
+# input = scenario_inference_and_keyword_substitution(input)
+# questions = split_input(input) # <class 'list'>
+# keyword_list, domain_list, time_list = zip(*[analyze_question(question) for question in questions])
+# # 将元组转换为列表
+# keyword1_list = list(keyword_list) # ['principle', 'indicator']
+# domain_list = list(domain_list) # ['market economics', 'financial sheet']
+# time_list = list(time_list) # ['past year', 'past year']
 
 
 url = "https://api.tavily.com/search"
@@ -31,7 +31,7 @@ payload = {
     "include_images": False,
     "include_image_descriptions": False,
     "include_domains": [],
-    "exclude_domains": domain_list
+    "exclude_domains": []
 }
 headers = {
     "Authorization": f"Bearer {os.getenv('TAVILY_API_KEY')}",
@@ -44,8 +44,6 @@ print(f"title={response['results'][0]['title']}\n")
 print(f"url={response['results'][0]['url']}\n")
 print(f"content={response['results'][0]['content']}\n")
 print(f"answer={response['answer']}\n")
-
-
 
 
 # 基于哈希和语义的去重
